@@ -2,9 +2,14 @@ package prose
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/muesli/reflow/indent"
 	"github.com/muesli/reflow/wordwrap"
+)
+
+var (
+	DefaultWrapWidth = 60
 )
 
 type Book struct {
@@ -17,10 +22,25 @@ func NewBook(width int) *Book {
 	}
 }
 
+func (b *Book) MustWrite(byts []byte) {
+	n, e := b.Write(byts)
+	check(e)
+	if n != len(byts) {
+		check(fmt.Errorf("failed to write all bytes"))
+	}
+}
+
 func (b *Book) Strings(s ...string) *Book {
-	for _, ss := range s {
-		_, e := b.Write([]byte(ss))
-		check(e)
+	for i, ss := range s {
+		ss = strings.TrimSpace(ss)
+		if len(ss) == 0 {
+			continue
+		}
+		ss = CollapseSpace(ss)
+		b.MustWrite([]byte(ss))
+		if i < len(s)-1 {
+			b.MustWrite([]byte(" "))
+		}
 	}
 	return b
 }
@@ -37,6 +57,10 @@ func (b *Book) Example(foreword, code string) *Book {
 		"\n",
 	)
 }
+
+// TODO: add a method to write a table
+// TODO: add a method to write a list, bulleted or numbered
+// TODO: prose.Strings(s ...string) string
 
 func (b *Book) NL() *Book {
 	return b.Strings("\n")

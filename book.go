@@ -12,6 +12,12 @@ var (
 	DefaultWrapWidth = 60
 )
 
+// Strings is a convenience function that trims, joins, wraps the provided
+// strings and returns the result.
+func Strings(s ...string) string {
+	return NewBook(DefaultWrapWidth).Strings(s...).String()
+}
+
 type Book struct {
 	wordwrap.WordWrap
 }
@@ -60,7 +66,6 @@ func (b *Book) Example(foreword, code string) *Book {
 
 // TODO: add a method to write a table
 // TODO: add a method to write a list, bulleted or numbered
-// TODO: prose.Strings(s ...string) string
 
 func (b *Book) NL() *Book {
 	return b.Strings("\n")

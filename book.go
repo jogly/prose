@@ -68,7 +68,8 @@ func (b *Book) Example(foreword, code string) *Book {
 // TODO: add a method to write a list, bulleted or numbered
 
 func (b *Book) NL() *Book {
-	return b.Strings("\n")
+	b.MustWrite([]byte("\n"))
+	return b
 }
 
 func check(e error) {
